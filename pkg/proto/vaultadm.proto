@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option go_package = "github.com/ZentriaMC/vaultadm/pkg/proto";
+
+package zentria.vaultadm;
+
+import "google/protobuf/empty.proto";
+
+message UnsealRequest {
+	string portion = 1;
+	bool reset = 2;
+	bool migrate = 3;
+}
+
+message UnsealResponse {
+	bool sealed = 1;
+	int32 threshold = 2;
+	int32 shares = 3;
+	int32 progress = 4;
+}
+
+message SealRequest {
+}
+
+message RootTokenRequest {
+	// Seconds
+	uint64 ttl = 1;
+	bool orphan = 2;
+}
+
+message RootTokenResponse {
+	string token = 1;
+	string accessor = 2;
+	repeated string policies = 3;
+	repeated string token_policies = 4;
+	map<string, string> metadata = 5;
+	uint64 lease_duration = 6;
+	bool renewable = 7;
+	string entity_id = 8;
+	string token_type = 9;
+	bool orphan = 10;
+	reserved 11; // mfa_requirement
+}
+
+service Manager {
+	rpc UnsealPortion(UnsealRequest) returns (UnsealResponse) {}
+
+	rpc Seal(SealRequest) returns (google.protobuf.Empty) {}
+
+	rpc ObtainRootToken(RootTokenRequest) returns (RootTokenResponse) {}
+}
